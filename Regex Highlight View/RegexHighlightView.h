@@ -29,6 +29,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
+@class RegexHighlightView,RegexDrawView;
 
 FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeText;
 FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeBackground;
@@ -54,6 +55,19 @@ typedef NS_ENUM(unsigned int, RegexHighlightViewTheme) {
     kRegexHighlightViewThemePrinting,
     kRegexHighlightViewThemeSunset
 };
+
+
+@interface RegexContainerView : UIView
+
+@property (nonatomic,strong) RegexHighlightView *highlightView;
+@property (nonatomic,strong) RegexDrawView *drawView;
+
+@end
+
+@interface RegexDrawView : UIView
+@property (nonatomic,weak) RegexHighlightView *highlightView;
+@end
+
 
 @interface RegexHighlightView : UITextView
 

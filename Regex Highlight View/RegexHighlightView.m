@@ -30,6 +30,7 @@
 #import "RegexHighlightView.h"
 
 #define EMPTY @""
+static CGFloat MARGIN = 8;
 
 NSString *const kRegexHighlightViewTypeText = @"text";
 NSString *const kRegexHighlightViewTypeBackground = @"background";
@@ -46,35 +47,162 @@ NSString *const kRegexHighlightViewTypeAttribute = @"attribute";
 NSString *const kRegexHighlightViewTypeProject = @"project";
 NSString *const kRegexHighlightViewTypeOther = @"other";
 
-@interface RegexHighlightView()
-@property (nonatomic,strong) id internalDelegate;
+
+
+@interface RegexHighlightView() <UITextViewDelegate>
+@property (nonatomic,weak) RegexDrawView *drawView;
+@property (nonatomic,weak) RegexContainerView *containerView;
+
+- (NSRange) visibleRangeOfTextView:(UITextView *)textView ;
+- (NSAttributedString*) highlightText:(NSAttributedString*)attributedString;
 @end
 
-@interface RegexHighlightViewDelegate : NSObject<UITextViewDelegate>
-@end
-@implementation RegexHighlightViewDelegate
-//Update the syntax highlighting if the text gets changed or the scrollview gets updated
-- (void) textViewDidChange:(UITextView *)textView {
-    [textView setNeedsDisplay];
+@implementation RegexContainerView
+
+- (instancetype) initWithFrame:(CGRect)frame{
+    if(!(self=[super initWithFrame:frame])) return nil;
+    
+    self.drawView = [[RegexDrawView alloc] initWithFrame:CGRectMake(0, 6, CGRectGetWidth(self.bounds), 8000)];
+    self.drawView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [self addSubview:self.drawView];
+    
+    CGRect rect = self.bounds;
+    rect.origin.y += 6;
+    rect.size.height -= 6;
+    
+    
+    self.highlightView = [[RegexHighlightView alloc] initWithFrame:rect];
+    self.highlightView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.highlightView.showsVerticalScrollIndicator = NO;
+    [self addSubview:self.highlightView];
+
+    
+    
+
+    self.drawView.highlightView = self.highlightView;
+    self.highlightView.drawView = self.drawView;
+    self.highlightView.containerView = self;
+    
+    self.clipsToBounds = YES;
+    
+    //self.highlightView.textColor = [UIColor colorWithWhite:0 alpha:0.3];
+    
+    return self;
 }
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
-	[scrollView setNeedsDisplay];
+    [self resize];
 }
-- (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    //Only update the text if the text changed
-	NSString* newText = [text stringByReplacingOccurrencesOfString:@"\t" withString:@"    "];
-	if(![newText isEqualToString:text]) {
-		textView.text = [textView.text stringByReplacingCharactersInRange:range withString:newText];
-		return NO;
-	}
-	return YES;
+
+- (void) resize{
+//    
+//    CGRect rr = self.drawView.frame;
+//    rr.size.height = self.highlightView.contentSize.height;
+//    rr.origin.y = -self.highlightView.contentOffset.y;
+//    self.drawView.frame = rr;
+    self.drawView.center = CGPointMake(self.drawView.center.x, 6 + CGRectGetHeight(self.drawView.frame)/2 - self.highlightView.contentOffset.y);
+    [self setNeedsDisplay];
+    
+    
 }
+
 @end
 
-static CGFloat MARGIN = 8;
+
+
+
+
+@implementation RegexDrawView
+
+- (instancetype) initWithFrame:(CGRect)frame{
+    if(!(self=[super initWithFrame:frame])) return nil;
+    self.userInteractionEnabled = NO;
+    self.backgroundColor = [UIColor clearColor];
+    
+    return self;
+}
+- (void) drawRect:(CGRect)rect {
+    //[super drawRect:rect];
+    
+    
+    
+    if(self.highlightView.text.length<=0) {
+        self.highlightView.text = EMPTY;
+        return;
+    }
+    
+    
+    //Prepare View for drawing
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetTextMatrix(context,CGAffineTransformIdentity);
+    CGContextTranslateCTM(context,0,([self bounds]).size.height);
+    CGContextScaleCTM(context,1.0,-1.0);
+    
+    //Get the view frame size
+    CGSize size = self.frame.size;
+    
+    //Determine default text color
+    UIColor* textColor = nil;
+    if(!self.highlightView.highlightColor||!(textColor=(self.highlightView.highlightColor)[kRegexHighlightViewTypeText])) {
+        if([self.highlightView.textColor isEqual:[UIColor clearColor]]) {
+            if(!(textColor=[RegexHighlightView highlightTheme:kRegexHighlightViewThemeDefault][kRegexHighlightViewTypeText]))
+                textColor = [UIColor blackColor];
+        } else
+            textColor = self.highlightView.textColor;
+    }
+    
+    //Set line height, font, color and break mode
+    CGFloat minimumLineHeight = [self.highlightView.text sizeWithFont:self.highlightView.font].height - 1,  maximumLineHeight = minimumLineHeight;
+    CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.highlightView.font.fontName, self.highlightView.font.pointSize,NULL);
+    CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
+    
+    //Apply paragraph settings
+    CTParagraphStyleRef style = CTParagraphStyleCreate((CTParagraphStyleSetting[3]){
+        {   kCTParagraphStyleSpecifierMinimumLineHeight,sizeof(minimumLineHeight),&minimumLineHeight},
+        {   kCTParagraphStyleSpecifierMaximumLineHeight,sizeof(maximumLineHeight),&maximumLineHeight},
+        {   kCTParagraphStyleSpecifierLineBreakMode,sizeof(CTLineBreakMode),&lineBreakMode}
+    },3);
+    NSDictionary* attributes = @{
+                                 (NSString*)kCTFontAttributeName                : (__bridge id)font,
+                                 (NSString*)kCTForegroundColorAttributeName     : (__bridge id)textColor.CGColor,
+                                 (NSString*)kCTParagraphStyleAttributeName      : (__bridge id)style};
+    
+    //Create path to work with a frame with applied margins
+    CGMutablePathRef path = CGPathCreateMutable();
+    
+    CGFloat minX = MARGIN+0.0;
+    CGFloat minY = (-self.highlightView.contentOffset.y+0) - 9;
+    minY = -8;
+    CGFloat width = (size.width-2*MARGIN);
+    //CGFloat height = (size.height+(self.contentOffset.y - (int)((self.contentOffset.y-MARGIN)/minimumLineHeight)*minimumLineHeight)-MARGIN);
+    CGFloat height = self.bounds.size.height; // self.highlightView.contentSize.height;
+    CGPathAddRect(path,NULL,CGRectMake(minX,minY,width,height));
+    
+    
+    // Create attributed string, with applied syntax highlighting
+    NSString *str = [self.highlightView.text substringWithRange:[self.highlightView visibleRangeOfTextView:self.highlightView]];
+    NSAttributedString *atr = [[NSAttributedString alloc] initWithString:str attributes:attributes];
+    CFAttributedStringRef attributedString = (__bridge CFAttributedStringRef)[self.highlightView highlightText:atr];
+    
+    //NSLog(@"%@",str);
+    
+    
+    //Draw the frame
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);
+    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0,CFAttributedStringGetLength(attributedString)),path,NULL);
+    CTFrameDraw(frame,context);
+}
+
+@end
+
+
+
+
+
+
 static NSMutableDictionary* highlightThemes;
 
 @implementation RegexHighlightView
+
 
 
 #pragma mark Init & Friends
@@ -82,18 +210,22 @@ static NSMutableDictionary* highlightThemes;
     if(!(self=[super init])) return nil;
     return self;
 }
-- (instancetype) initWithCoder:(NSCoder*)decoder{
-    if(!(self=[super initWithCoder:decoder])) return nil;
-    self.textColor = [UIColor clearColor];
-    self.internalDelegate = [[RegexHighlightViewDelegate alloc] init];
-    self.delegate = self.internalDelegate;
-    return self;
-}
+//- (instancetype) initWithCoder:(NSCoder*)decoder{
+//    if(!(self=[super initWithCoder:decoder])) return nil;
+//    self.textColor = [UIColor clearColor];
+//    self.internalDelegate = [[RegexHighlightViewDelegate alloc] init];
+//    self.delegate = self.internalDelegate;
+//    return self;
+//}
 - (instancetype) initWithFrame:(CGRect)frame{
     if(!(self=[super initWithFrame:frame])) return nil;
     self.textColor = [UIColor clearColor];
-    self.internalDelegate = [[RegexHighlightViewDelegate alloc] init];
-    self.delegate = self.internalDelegate;
+    self.delegate = self;
+    
+    
+    
+
+    
     return self;
 }
 
@@ -266,62 +398,84 @@ static NSMutableDictionary* highlightThemes;
 }
 
 - (void) drawRect:(CGRect)rect {
-    if(self.text.length<=0) {
-        self.text = EMPTY;
-        return;
-    }
+    [super drawRect:rect];
+    
+    return;
 
-    //Prepare View for drawing
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetTextMatrix(context,CGAffineTransformIdentity);
-    CGContextTranslateCTM(context,0,([self bounds]).size.height);
-    CGContextScaleCTM(context,1.0,-1.0);
-
-    //Get the view frame size
-    CGSize size = self.frame.size;
-    
-    //Determine default text color
-    UIColor* textColor = nil;
-    if(!self.highlightColor||!(textColor=(self.highlightColor)[kRegexHighlightViewTypeText])) {
-        if([self.textColor isEqual:[UIColor clearColor]]) {
-            if(!(textColor=[RegexHighlightView highlightTheme:kRegexHighlightViewThemeDefault][kRegexHighlightViewTypeText]))
-               textColor = [UIColor blackColor];
-        } else textColor = self.textColor;
-    }
-    
-    //Set line height, font, color and break mode
-    CGFloat minimumLineHeight = [self.text sizeWithFont:self.font].height,maximumLineHeight = minimumLineHeight;
-    CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.font.fontName,self.font.pointSize,NULL);
-    CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
-    
-    //Apply paragraph settings
-    CTParagraphStyleRef style = CTParagraphStyleCreate((CTParagraphStyleSetting[3]){
-        {kCTParagraphStyleSpecifierMinimumLineHeight,sizeof(minimumLineHeight),&minimumLineHeight},
-        {kCTParagraphStyleSpecifierMaximumLineHeight,sizeof(maximumLineHeight),&maximumLineHeight},
-        {kCTParagraphStyleSpecifierLineBreakMode,sizeof(CTLineBreakMode),&lineBreakMode}
-    },3);
-    NSDictionary* attributes = @{(NSString*)kCTFontAttributeName: (__bridge id)font,(NSString*)kCTForegroundColorAttributeName: (__bridge id)textColor.CGColor,(NSString*)kCTParagraphStyleAttributeName: (__bridge id)style};
-                
-    //Create path to work with a frame with applied margins
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddRect(path,NULL,CGRectMake(MARGIN+0.0,(-self.contentOffset.y+0),(size.width-2*MARGIN),(size.height+(self.contentOffset.y - (int)((self.contentOffset.y-MARGIN)/minimumLineHeight)*minimumLineHeight)-MARGIN)));
-        
-        
-    //Create attributed string, with applied syntax highlighting
-    CFAttributedStringRef attributedString = (__bridge CFAttributedStringRef)[self highlightText:[[NSAttributedString alloc] initWithString:[self.text substringWithRange:[self visibleRangeOfTextView:self]]attributes:attributes]];
-    
-    //Draw the frame
-    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);
-    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0,CFAttributedStringGetLength(attributedString)),path,NULL);
-    CTFrameDraw(frame,context);
+//    if(self.text.length<=0) {
+//        self.text = EMPTY;
+//        return;
+//    }
+//    
+//
+//    //Prepare View for drawing
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    CGContextSetTextMatrix(context,CGAffineTransformIdentity);
+//    CGContextTranslateCTM(context,0,([self bounds]).size.height);
+//    CGContextScaleCTM(context,1.0,-1.0);
+//
+//    //Get the view frame size
+//    CGSize size = self.frame.size;
+//    
+//    //Determine default text color
+//    UIColor* textColor = nil;
+//    if(!self.highlightColor||!(textColor=(self.highlightColor)[kRegexHighlightViewTypeText])) {
+//        if([self.textColor isEqual:[UIColor clearColor]]) {
+//            if(!(textColor=[RegexHighlightView highlightTheme:kRegexHighlightViewThemeDefault][kRegexHighlightViewTypeText]))
+//               textColor = [UIColor blackColor];
+//        } else
+//            textColor = self.textColor;
+//    }
+//    
+//    //Set line height, font, color and break mode
+//    CGFloat minimumLineHeight = [self.text sizeWithFont:self.font].height - 1,  maximumLineHeight = minimumLineHeight;
+//    CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.font.fontName, self.font.pointSize,NULL);
+//    CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
+//    
+//    //Apply paragraph settings
+//    CTParagraphStyleRef style = CTParagraphStyleCreate((CTParagraphStyleSetting[3]){
+//        {   kCTParagraphStyleSpecifierMinimumLineHeight,sizeof(minimumLineHeight),&minimumLineHeight},
+//        {   kCTParagraphStyleSpecifierMaximumLineHeight,sizeof(maximumLineHeight),&maximumLineHeight},
+//        {   kCTParagraphStyleSpecifierLineBreakMode,sizeof(CTLineBreakMode),&lineBreakMode}
+//    },3);
+//    NSDictionary* attributes = @{
+//                                 (NSString*)kCTFontAttributeName                : (__bridge id)font,
+//                                 (NSString*)kCTForegroundColorAttributeName     : (__bridge id)textColor.CGColor,
+//                                 (NSString*)kCTParagraphStyleAttributeName      : (__bridge id)style};
+//                
+//    //Create path to work with a frame with applied margins
+//    CGMutablePathRef path = CGPathCreateMutable();
+//    
+//    CGFloat minX = MARGIN+0.0;
+//    CGFloat minY = (-self.contentOffset.y+0) - 9;
+//    minY = 0;
+//    CGFloat width = (size.width-2*MARGIN);
+//    //CGFloat height = (size.height+(self.contentOffset.y - (int)((self.contentOffset.y-MARGIN)/minimumLineHeight)*minimumLineHeight)-MARGIN);
+//    CGFloat height = self.contentSize.height;
+//    CGPathAddRect(path,NULL,CGRectMake(minX,minY,width,height));
+//    
+//    
+//    // Create attributed string, with applied syntax highlighting
+//    NSString *str = [self.text substringWithRange:[self visibleRangeOfTextView:self]];
+//    NSAttributedString *atr = [[NSAttributedString alloc] initWithString:str attributes:attributes];
+//    CFAttributedStringRef attributedString = (__bridge CFAttributedStringRef)[self highlightText:atr];
+////    NSLog(@"%f %f %f %f",self.contentOffset.y,rect.origin.y,rect.size.height,height);
+////    NSLog(@"%@",str);
+//
+//    
+//    //Draw the frame
+//    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);
+//    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0,CFAttributedStringGetLength(attributedString)),path,NULL);
+//    CTFrameDraw(frame,context);
 }
 
 - (NSRange) visibleRangeOfTextView:(UITextView *)textView {
-    CGRect bounds = textView.bounds;
-    //Get start and end bouns for text position
-    UITextPosition *start = [textView characterRangeAtPoint:bounds.origin].start,*end = [textView characterRangeAtPoint:CGPointMake(CGRectGetMaxX(bounds),CGRectGetMaxY(bounds))].end;
-    //Make a range out of it and return
-    return NSMakeRange([textView offsetFromPosition:textView.beginningOfDocument toPosition:start],[textView offsetFromPosition:start toPosition:end]);
+    return NSMakeRange(0, self.text.length);
+//    CGRect bounds = textView.bounds;
+//    //Get start and end bouns for text position
+//    UITextPosition *start = [textView characterRangeAtPoint:bounds.origin].start,*end = [textView characterRangeAtPoint:CGPointMake(CGRectGetMaxX(bounds),CGRectGetMaxY(bounds))].end;
+//    //Make a range out of it and return
+//    return NSMakeRange([textView offsetFromPosition:textView.beginningOfDocument toPosition:start],[textView offsetFromPosition:start toPosition:end]);
 }
 - (NSAttributedString*) highlightText:(NSAttributedString*)attributedString {
     //Create a mutable attribute string to set the highlighting
@@ -356,16 +510,39 @@ static NSMutableDictionary* highlightThemes;
 }
 
 
+#pragma mark Delegate
+- (void) textViewDidChange:(UITextView *)textView {
+    [textView setNeedsDisplay];
+    [self.containerView resize];
+    [self.drawView setNeedsDisplay];
+}
+- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
+    [scrollView setNeedsDisplay];
+    
+    [self.containerView scrollViewDidScroll:scrollView];
+    
+}
+- (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    //Only update the text if the text changed
+    NSString* newText = [text stringByReplacingOccurrencesOfString:@"\t" withString:@"    "];
+    if(![newText isEqualToString:text]) {
+        textView.text = [textView.text stringByReplacingCharactersInRange:range withString:newText];
+        return NO;
+    }
+    return YES;
+}
+
+
 #pragma mark Properties
 - (void) setHighlightTheme:(RegexHighlightViewTheme)theme {
     self.highlightColor = [RegexHighlightView highlightTheme:theme];
     
     // Set font, text color and background color back to default
-    self.textColor = [UIColor clearColor];
-    UIColor *backgroundColor = (self.highlightColor)[kRegexHighlightViewTypeBackground];
-    if(backgroundColor)
-         self.backgroundColor = backgroundColor;
-    else
+    //self.textColor = [UIColor clearColor];
+//    UIColor *backgroundColor = (self.highlightColor)[kRegexHighlightViewTypeBackground];
+//    if(backgroundColor)
+//         self.backgroundColor = backgroundColor;
+//    else
         self.backgroundColor = [UIColor clearColor];
     
     //self.font = [UIFont systemFontOfSize:(theme!=kRegexHighlightViewThemePresentation?14.0:18.0)];
@@ -385,6 +562,10 @@ static NSMutableDictionary* highlightThemes;
 - (void) setHighlightDefinitionWithContentsOfFile:(NSString*)newPath {
     [self setHighlightDefinition:[NSDictionary dictionaryWithContentsOfFile:newPath]];
 }
-
+- (void) setText:(NSString *)text{
+    [super setText:text];
+    
+    [self.drawView setNeedsDisplay];
+}
 
 @end
