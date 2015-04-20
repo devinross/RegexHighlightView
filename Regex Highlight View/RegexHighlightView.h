@@ -44,7 +44,7 @@ FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeAttribute;
 FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeProject;
 FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeOther;
 
-typedef enum {
+typedef NS_ENUM(unsigned int, RegexHighlightViewTheme) {
     kRegexHighlightViewThemeBasic,
     kRegexHighlightViewThemeDefault,
     kRegexHighlightViewThemeDusk,
@@ -53,17 +53,16 @@ typedef enum {
     kRegexHighlightViewThemePresentation,
     kRegexHighlightViewThemePrinting,
     kRegexHighlightViewThemeSunset
-} RegexHighlightViewTheme;
+};
 
 @interface RegexHighlightView : UITextView
 
-@property(nonatomic) NSDictionary *highlightColor;
-@property(nonatomic) NSDictionary *highlightDefinition;
+@property (nonatomic,strong) NSDictionary *highlightColor;
+@property (nonatomic,strong) NSDictionary *highlightDefinition;
+@property (nonatomic,assign) RegexHighlightViewTheme highlightTheme;
 
--(void)setHighlightDefinition:(NSDictionary*)highlightDefinition;
--(void)setHighlightDefinitionWithContentsOfFile:(NSString*)path;
+- (void) setHighlightDefinitionWithContentsOfFile:(NSString*)path;
 
--(void)setHighlightTheme:(RegexHighlightViewTheme)theme;
-+(NSDictionary*)highlightTheme:(RegexHighlightViewTheme)theme;
++ (NSDictionary*) highlightTheme:(RegexHighlightViewTheme)theme;
 
 @end

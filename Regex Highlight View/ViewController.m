@@ -23,7 +23,7 @@
     // Overwrite the textColor from the nib, set to clearColor
     highlightView.textColor = [UIColor clearColor];
     // Set the syntax highlighting to use (the tempalate file contains the default highlighting)
-    [highlightView setHighlightDefinitionWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"template" ofType:@"plist"]];
+    [highlightView setHighlightDefinitionWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"objectivec" ofType:@"plist"]];
     // Set the color theme to use (all XCode themes are fully supported!)
     [highlightView setHighlightTheme:kRegexHighlightViewThemeDusk];
 }
