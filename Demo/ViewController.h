@@ -6,11 +6,11 @@
 //  Copyright (c) 2012 Kristian Kraljic (dikrypt.com, ksquared.de). All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import "RegexHighlightView.h"
 
 @interface ViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet RegexHighlightView *highlightView;
+@property (strong, nonatomic) RegexHighlightView *highlightView;
 
 @end

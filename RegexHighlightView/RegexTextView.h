@@ -27,56 +27,26 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
-@class RegexHighlightView,RegexDrawView;
-
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeText;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeBackground;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeComment;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeDocumentationComment;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeString;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeCharacter;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeNumber;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeKeyword;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypePreprocessor;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeURL;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeAttribute;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeProject;
-FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeOther;
-
-typedef NS_ENUM(unsigned int, RegexHighlightViewTheme) {
-    kRegexHighlightViewThemeBasic,
-    kRegexHighlightViewThemeDefault,
-    kRegexHighlightViewThemeDusk,
-    kRegexHighlightViewThemeLowKey,
-    kRegexHighlightViewThemeMidnight,
-    kRegexHighlightViewThemePresentation,
-    kRegexHighlightViewThemePrinting,
-    kRegexHighlightViewThemeSunset
-};
+#import "RegexConstants.h"
 
 
-@interface RegexContainerView : UIView
+@class RegexDrawView,RegexHighlightView;
 
-@property (nonatomic,strong) RegexHighlightView *highlightView;
-@property (nonatomic,strong) RegexDrawView *drawView;
+@interface RegexTextView : UITextView <UITextViewDelegate>
 
-@end
-
-@interface RegexDrawView : UIView
-@property (nonatomic,weak) RegexHighlightView *highlightView;
-@end
-
-
-@interface RegexHighlightView : UITextView
+@property (nonatomic,weak) RegexDrawView *drawView;
+@property (nonatomic,weak) RegexHighlightView *containerView;
 
 @property (nonatomic,strong) NSDictionary *highlightColor;
 @property (nonatomic,strong) NSDictionary *highlightDefinition;
 @property (nonatomic,assign) RegexHighlightViewTheme highlightTheme;
 
 - (void) setHighlightDefinitionWithContentsOfFile:(NSString*)path;
-
 + (NSDictionary*) highlightTheme:(RegexHighlightViewTheme)theme;
+- (NSRange) visibleRangeOfTextView:(UITextView *)textView ;
+- (NSAttributedString*) highlightText:(NSAttributedString*)attributedString;
 
 @end

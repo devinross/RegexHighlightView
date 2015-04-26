@@ -7,36 +7,37 @@
 //
 
 #import "ViewController.h"
-
-@interface ViewController ()
-
-@end
+#import "RegexHighlightView.h"
 
 @implementation ViewController
-@synthesize highlightView;
 
-- (void)viewDidLoad
-{
+- (void) loadView{
+    [super loadView];
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.highlightView = [[RegexHighlightView alloc] initWithFrame:self.view.bounds];
+    self.highlightView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:self.highlightView];
+}
+
+- (void)viewDidLoad{
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
     // Overwrite the textColor from the nib, set to clearColor
-    highlightView.textColor = [UIColor clearColor];
+    self.highlightView.textView.textColor = [UIColor clearColor];
     // Set the syntax highlighting to use (the tempalate file contains the default highlighting)
-    [highlightView setHighlightDefinitionWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"objectivec" ofType:@"plist"]];
+    [self.highlightView.textView setHighlightDefinitionWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"objectivec" ofType:@"plist"]];
     // Set the color theme to use (all XCode themes are fully supported!)
-    [highlightView setHighlightTheme:kRegexHighlightViewThemeDusk];
+    [self.highlightView.textView setHighlightTheme:kRegexHighlightViewThemeDusk];
 }
 
-- (void)viewDidUnload
-{
+- (void)viewDidUnload{
     [self setHighlightView:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation{
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
     } else {
