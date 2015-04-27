@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>keyword</key>
+	<string>(?&lt;!\w)(class|deinit|enum|extension|func|import|init|let|protocol|static|struct|subscript|typealias|var|break|case|continue|default|do|else|fallthrough|if|in|for|return|switch|where|while|as|dynamicType|is|new|super|self|Self|Type|__COLUMN__|__FILE__|__FUNCTION__|__LINE__|associativity|didSet|get|infix|inout|left|mutating|none|nonmutating|operator|override|postfix|precedence|prefix|right|set|unowned|unowned|safe|unsafe|weak|willSet|true|false|nilabs|advance|alignof|alignofValue|assert|bridgeFromObjectiveC|bridgeFromObjectiveCUnconditional|bridgeToObjectiveC|bridgeToObjectiveCUnconditional|c|contains|count|countElements|countLeadingZeros|debugPrint|debugPrintln|distance|dropFirst|dropLast|dump|encodeBitsAsWords|enumerate|equal|filter|find|getBridgedObjectiveCType|getVaList|indices|insertionSort|isBridgedToObjectiveC|isBridgedVerbatimToObjectiveC|isUniquelyReferenced|join|lexicographicalCompare|map|max|maxElement|min|minElement|numericCast|partition|posix|print|println|quickSort|reduce|reflect|reinterpretCast|reverse|roundUpToAlignment|sizeof|sizeofValue|sort|split|startsWith|strideof|strideofValue|swap|swift|toString|transcode|underestimateCount|unsafeReflect|withExtendedLifetime|withObjectAtPlusZero|withUnsafePointer|withUnsafePointerToObject|withUnsafePointers|withVaList)(?!\w)</string>
+	<key>url</key>
+	<string>((https?|mailto|ftp|file)://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)</string>
+	<key>project</key>
+	<string>\b((NS|UI|CG)\w+)</string>
+	<key>attribute</key>
+	<string>(\.[^\d]\w+)</string>
+	<key>number</key>
+	<string>(?&lt;!\w)(((0x[0-9a-fA-F]+)|(([0-9]+\.?[0-9]*|\.[0-9]+)([eE][-+]?[0-9]+)?))[fFlLuU]{0,2})(?!\w)</string>
+	<key>character</key>
+	<string>(&apos;.&apos;)|(@(\[|{).*(\]|}))</string>
+	<key>string</key>
+	<string>(@?&quot;(?:[^&quot;\\]|\\.)*&quot;)|(&lt;.*&gt;)</string>
+	<key>comment</key>
+	<string>//[^&quot;\n\r]*(?:&quot;[^&quot;\n\r]*&quot;[^&quot;\n\r]*)*[\r\n]</string>
+	<key>documentation_comment</key>
+	<string>\/\*(.*?)\*\/</string>
+	<key>documentation_comment_keyword</key>
+	<string>(\/\*|\*\/)</string>
+	<key>preprocessor</key>
+	<string>(#.*?)[\r\n]</string>
+</dict>
+</plist>
