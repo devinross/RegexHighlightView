@@ -9,7 +9,7 @@
 #import "RegexDrawView.h"
 #import "RegexTextView.h"
 #import "RegexConstants.h"
-
+#import "RegexHighlightView.h"
 
 
 @implementation RegexDrawView
@@ -18,16 +18,15 @@
     if(!(self=[super initWithFrame:frame])) return nil;
     self.userInteractionEnabled = NO;
     self.backgroundColor = [UIColor clearColor];
-    
     return self;
 }
 - (void) drawRect:(CGRect)rect {
-    //[super drawRect:rect];
+    [super drawRect:rect];
     
     
     
-    if(self.highlightView.text.length<=0) {
-        self.highlightView.text = EMPTY;
+    if(self.highlightView.textView.text.length<=0) {
+        self.highlightView.textView.text = EMPTY;
         return;
     }
     
@@ -43,17 +42,17 @@
     
     //Determine default text color
     UIColor* textColor = nil;
-    if(!self.highlightView.highlightColor||!(textColor=(self.highlightView.highlightColor)[kRegexHighlightViewTypeText])) {
-        if([self.highlightView.textColor isEqual:[UIColor clearColor]]) {
-            if(!(textColor=[RegexTextView highlightTheme:kRegexHighlightViewThemeDefault][kRegexHighlightViewTypeText]))
-                textColor = [UIColor blackColor];
-        } else
-            textColor = self.highlightView.textColor;
+    if(!self.highlightView.syntaxColors || !(textColor=(self.highlightView.syntaxColors)[kRegexHighlightViewTypeText])) {
+//        if([self.highlightView.textColor isEqual:[UIColor clearColor]]) {
+//            if(!(textColor=[RegexHighlightView highlightTheme:kRegexHighlightViewThemeDefault][kRegexHighlightViewTypeText]))
+//                textColor = [UIColor blackColor];
+//        } else
+            textColor = self.highlightView.textView.textColor;
     }
     
     //Set line height, font, color and break mode
-    CGFloat minimumLineHeight = [self.highlightView.text sizeWithFont:self.highlightView.font].height - 1,  maximumLineHeight = minimumLineHeight;
-    CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.highlightView.font.fontName, self.highlightView.font.pointSize,NULL);
+    CGFloat minimumLineHeight = [self.highlightView.textView.text sizeWithFont:self.highlightView.textView.font].height - 1,  maximumLineHeight = minimumLineHeight;
+    CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)self.highlightView.textView.font.fontName, self.highlightView.textView.font.pointSize,NULL);
     CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
     
     //Apply paragraph settings
@@ -71,7 +70,7 @@
     CGMutablePathRef path = CGPathCreateMutable();
     
     CGFloat minX = MARGIN+0.0;
-    CGFloat minY = (-self.highlightView.contentOffset.y+0) - 9;
+    CGFloat minY = -self.highlightView.textView.contentOffset.y - 9;
     minY = -8;
     CGFloat width = (size.width-2*MARGIN);
     //CGFloat height = (size.height+(self.contentOffset.y - (int)((self.contentOffset.y-MARGIN)/minimumLineHeight)*minimumLineHeight)-MARGIN);
@@ -80,12 +79,9 @@
     
     
     // Create attributed string, with applied syntax highlighting
-    NSString *str = [self.highlightView.text substringWithRange:[self.highlightView visibleRangeOfTextView:self.highlightView]];
+    NSString *str = [self.highlightView.textView.text substringWithRange:[self.highlightView.textView visibleRangeOfTextView:self.highlightView.textView]];
     NSAttributedString *atr = [[NSAttributedString alloc] initWithString:str attributes:attributes];
-    CFAttributedStringRef attributedString = (__bridge CFAttributedStringRef)[self.highlightView highlightText:atr];
-    
-    //NSLog(@"%@",str);
-    
+    CFAttributedStringRef attributedString = (__bridge CFAttributedStringRef)[self.highlightView.textView highlightText:atr];
     
     //Draw the frame
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);

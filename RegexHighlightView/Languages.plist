@@ -454,6 +454,12 @@
 	</dict>
 	<dict>
 		<key>name</key>
+		<string>Swift</string>
+		<key>file</key>
+		<string>swift</string>
+	</dict>
+	<dict>
+		<key>name</key>
 		<string>Tcl/Tk</string>
 		<key>file</key>
 		<string>tcltk</string>

@@ -15,11 +15,18 @@
 
 @property (nonatomic,strong) RegexTextView *textView;
 @property (nonatomic,strong) RegexDrawView *drawView;
+@property (nonatomic,assign) RegexHighlightViewTheme highlightTheme;
+
+
+@property (nonatomic,strong) NSDictionary *syntaxColors;
+@property (nonatomic,strong) NSDictionary *syntaxRegularExpressions;
+
+@property (nonatomic,copy) NSString *languageFile;
 
 - (void) resize;
 
-
 + (NSArray*) languages;
++ (NSDictionary*) highlightTheme:(RegexHighlightViewTheme)theme;
 
 
 @end
