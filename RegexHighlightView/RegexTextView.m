@@ -50,6 +50,7 @@
 - (instancetype) initWithFrame:(CGRect)frame{
     if(!(self=[super initWithFrame:frame])) return nil;
     self.textColor = [UIColor colorWithWhite:0.5 alpha:0.1];
+    //self.textColor = [UIColor redColor];
     self.delegate = self;
     self.backgroundColor = [UIColor clearColor];
     return self;
@@ -94,7 +95,6 @@
     for(NSString* key in definition) {
         
         NSString* expression = definition[key];
-        //NSLog(@"%@ %@",key,expression);
         if(!expression||[expression length]<=0) continue;
         
         
@@ -108,7 +108,6 @@
                 if(!(textColor=[RegexHighlightView highlightTheme:kRegexHighlightViewThemeDefault][key]))
                     textColor = [UIColor blackColor];
             
-            //NSLog(@"%@ %@",match,textColor);
             
             [coloredString addAttribute:(NSString*)kCTForegroundColorAttributeName value:(id)textColor.CGColor range:[match rangeAtIndex:0]];                            
         }

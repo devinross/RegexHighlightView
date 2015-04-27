@@ -17,9 +17,10 @@
 @property (nonatomic,strong) RegexDrawView *drawView;
 @property (nonatomic,assign) RegexHighlightViewTheme highlightTheme;
 
-
 @property (nonatomic,strong) NSDictionary *syntaxColors;
 @property (nonatomic,strong) NSDictionary *syntaxRegularExpressions;
+
+@property (nonatomic,assign) BOOL showLineNumbers;
 
 @property (nonatomic,copy) NSString *languageFile;
 

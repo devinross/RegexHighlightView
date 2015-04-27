@@ -23,13 +23,17 @@
     [self addSubview:self.drawView];
     
     CGRect rect = self.bounds;
-    rect.origin.y += 6;
+    rect.origin.y += 7;
     rect.size.height -= 6;
     
+    rect.origin.x += 22;
+    rect.size.width -= 22;
     
     self.textView = [[RegexTextView alloc] initWithFrame:rect];
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.textView.showsVerticalScrollIndicator = NO;
+    
+    self.textView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     [self addSubview:self.textView];
     
     
@@ -159,7 +163,8 @@ static NSMutableDictionary* highlightThemes;
             break;
         case kRegexHighlightViewThemeLowKey:
             themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
-                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 1),
+                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
+                           
                            kRegexHighlightViewTypeComment                        : RGBA(84, 99, 75, 1),
                            kRegexHighlightViewTypeDocumentationComment           : RGBA(84, 99, 75, 1),
                            kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(84, 99, 75, 1),
@@ -191,7 +196,7 @@ static NSMutableDictionary* highlightThemes;
             break;
         case kRegexHighlightViewThemePresentation:
             themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
-                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 1),
+                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
                            kRegexHighlightViewTypeComment                        : RGBA(38, 126, 61, 1),
                            kRegexHighlightViewTypeDocumentationComment           : RGBA(38, 126, 61, 1),
                            kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(38, 126, 61, 1),
@@ -207,7 +212,7 @@ static NSMutableDictionary* highlightThemes;
             break;
         case kRegexHighlightViewThemePrinting:
             themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
-                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 1),
+                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
                            kRegexHighlightViewTypeComment                        : RGBA(113, 113, 113, 1),
                            kRegexHighlightViewTypeDocumentationComment           : RGBA(113, 113, 113, 1),
                            kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(64, 64, 64, 1),
