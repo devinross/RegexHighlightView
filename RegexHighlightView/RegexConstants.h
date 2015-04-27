@@ -36,5 +36,5 @@ typedef NS_ENUM(unsigned int, RegexHighlightViewTheme) {
 
 };
 
-#define EMPTY @""
+#define EMPTY @" "
 static CGFloat MARGIN = 8;

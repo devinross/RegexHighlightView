@@ -25,9 +25,9 @@
     
     
     RegexTextView *txtView = self.highlightView.textView;
-    if(txtView.text.length<=0) {
-        txtView.text = EMPTY;
-        return;
+    NSString *str = txtView.text;
+    if(str.length < 1) {
+        str = EMPTY;
     }
     
     NSDictionary* attributes;
@@ -43,7 +43,7 @@
     
     CGSize size = self.frame.size;
     UIColor *textColor = self.highlightView.syntaxColors[kRegexHighlightViewTypeText];
-    CGFloat minimumLineHeight = [txtView.text sizeWithFont:txtView.font].height - 1,  maximumLineHeight = minimumLineHeight;
+    CGFloat minimumLineHeight = [str sizeWithFont:txtView.font].height - 1,  maximumLineHeight = minimumLineHeight;
     CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)txtView.font.fontName, txtView.font.pointSize,NULL);
     CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
     
@@ -67,7 +67,6 @@
     CGFloat width = size.width - minX - MARGIN, height = self.bounds.size.height;
     CGPathAddRect(path,NULL,CGRectMake(minX,minY,width,height));
     
-    NSString *str = txtView.text;
     NSAttributedString *atr = [[NSAttributedString alloc] initWithString:str attributes:attributes];
     CFAttributedStringRef attributedString = (__bridge CFAttributedStringRef)[txtView highlightText:atr];
     
@@ -112,7 +111,7 @@
                   (NSString*)kCTForegroundColorAttributeName     : (__bridge id)[UIColor colorWithWhite:125/255.0f alpha:1].CGColor,
                   (NSString*)kCTParagraphStyleAttributeName      : (__bridge id)paragraphRef };
     
-    atr = [[NSMutableAttributedString alloc] initWithString:[self numberStringWithCount:num frame:textFrame] attributes:attributes];
+    atr = [[NSMutableAttributedString alloc] initWithString:[self numberStringWithText:str count:num frame:textFrame] attributes:attributes];
     attributedString = (__bridge CFAttributedStringRef)atr;
 
     
@@ -159,14 +158,13 @@
 }
 
 
-- (NSString*) numberStringWithCount:(NSInteger)count frame:(CTFrameRef)frame{
+- (NSString*) numberStringWithText:(NSString*)text count:(NSInteger)count frame:(CTFrameRef)frame{
     
     
     NSMutableString *str = [[NSMutableString alloc] init];
     
     
-    RegexTextView *txtView = self.highlightView.textView;
-    NSString *text = txtView.text;
+
 
     CFArrayRef  lines       = CTFrameGetLines(frame);
     CFIndex     numLines    = CFArrayGetCount(lines);
@@ -202,8 +200,7 @@
         
     }
     
-    
-    if(end <= text.length)
+    if(end <= text.length || text.length < 1)
         [str appendFormat:@"%ld\n",(long)ctr];
 
 
