@@ -40,12 +40,8 @@
 @property (nonatomic,weak) RegexDrawView *drawView;
 @property (nonatomic,weak) RegexHighlightView *containerView;
 
-@property (nonatomic,strong) NSDictionary *highlightColor;
-@property (nonatomic,strong) NSDictionary *highlightDefinition;
-@property (nonatomic,assign) RegexHighlightViewTheme highlightTheme;
 
-- (void) setHighlightDefinitionWithContentsOfFile:(NSString*)path;
-+ (NSDictionary*) highlightTheme:(RegexHighlightViewTheme)theme;
+
 - (NSRange) visibleRangeOfTextView:(UITextView *)textView ;
 - (NSAttributedString*) highlightText:(NSAttributedString*)attributedString;
 

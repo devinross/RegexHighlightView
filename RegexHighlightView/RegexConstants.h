@@ -24,14 +24,16 @@ FOUNDATION_EXPORT NSString *const kRegexHighlightViewTypeOther;
 
 
 typedef NS_ENUM(unsigned int, RegexHighlightViewTheme) {
-    kRegexHighlightViewThemeBasic,
-    kRegexHighlightViewThemeDefault,
-    kRegexHighlightViewThemeDusk,
-    kRegexHighlightViewThemeLowKey,
-    kRegexHighlightViewThemeMidnight,
-    kRegexHighlightViewThemePresentation,
-    kRegexHighlightViewThemePrinting,
-    kRegexHighlightViewThemeSunset
+    kRegexHighlightViewThemeBasic = 0,
+    kRegexHighlightViewThemeDefault = 1,
+    kRegexHighlightViewThemeDusk = 2,
+    kRegexHighlightViewThemeLowKey = 3,
+    kRegexHighlightViewThemeMidnight = 4,
+    kRegexHighlightViewThemePresentation = 5,
+    kRegexHighlightViewThemePrinting = 6,
+    kRegexHighlightViewThemeSunset = 7,
+    kRegexHighlightViewThemeCustom
+
 };
 
 #define EMPTY @""

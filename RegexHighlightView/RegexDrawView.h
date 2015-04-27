@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@class RegexTextView;
+@class RegexHighlightView;
 
 @interface RegexDrawView : UIView
-@property (nonatomic,weak) RegexTextView *highlightView;
+@property (nonatomic,weak) RegexHighlightView *highlightView;
 @end
 

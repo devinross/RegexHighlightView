@@ -11,7 +11,6 @@
 		20CB8D851AEBCFBD0007B738 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 20CB8D841AEBCFBD0007B738 /* AppDelegate.m */; };
 		20CB8D881AEBCFC40007B738 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 20CB8D871AEBCFC40007B738 /* ViewController.m */; };
 		20CB8D8B1AEBCFE30007B738 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 20CB8D891AEBCFE30007B738 /* InfoPlist.strings */; };
-		20CB8D931AEBCFED0007B738 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 20CB8D921AEBCFED0007B738 /* Default-568h@2x.png */; };
 		20CB8D951AEBCFF30007B738 /* Regex Highlight View-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20CB8D941AEBCFF30007B738 /* Regex Highlight View-Info.plist */; };
 		20CB8DED1AEBD01C0007B738 /* RegexTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 20CB8D981AEBD01C0007B738 /* RegexTextView.m */; };
 		20CB8DEE1AEBD01C0007B738 /* actionscript.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20CB8D9A1AEBD01C0007B738 /* actionscript.plist */; };
@@ -101,6 +100,7 @@
 		20CB8E461AEBD07E0007B738 /* RegexConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 20CB8E451AEBD07E0007B738 /* RegexConstants.m */; };
 		20CB8E491AEBD1390007B738 /* RegexDrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = 20CB8E481AEBD1390007B738 /* RegexDrawView.m */; };
 		20CB8E4D1AEBD5770007B738 /* Languages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20CB8E4C1AEBD5770007B738 /* Languages.plist */; };
+		20E8FE471AEDC0590020CC20 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20E8FE461AEDC0590020CC20 /* Images.xcassets */; };
 		F790108515F014D200C297D7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F790108415F014D200C297D7 /* UIKit.framework */; };
 		F790108715F014D200C297D7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F790108615F014D200C297D7 /* Foundation.framework */; };
 		F790108915F014D200C297D7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F790108815F014D200C297D7 /* CoreGraphics.framework */; };
@@ -115,7 +115,6 @@
 		20CB8D861AEBCFC40007B738 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewController.h; path = Demo/ViewController.h; sourceTree = SOURCE_ROOT; };
 		20CB8D871AEBCFC40007B738 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ViewController.m; path = Demo/ViewController.m; sourceTree = SOURCE_ROOT; };
 		20CB8D8A1AEBCFE30007B738 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Demo/en.lproj/InfoPlist.strings; sourceTree = SOURCE_ROOT; };
-		20CB8D921AEBCFED0007B738 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "Demo/Default-568h@2x.png"; sourceTree = SOURCE_ROOT; };
 		20CB8D941AEBCFF30007B738 /* Regex Highlight View-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Regex Highlight View-Info.plist"; path = "Demo/Regex Highlight View-Info.plist"; sourceTree = SOURCE_ROOT; };
 		20CB8D971AEBD01C0007B738 /* RegexTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexTextView.h; sourceTree = "<group>"; };
 		20CB8D981AEBD01C0007B738 /* RegexTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexTextView.m; sourceTree = "<group>"; };
@@ -209,6 +208,7 @@
 		20CB8E471AEBD1390007B738 /* RegexDrawView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexDrawView.h; sourceTree = "<group>"; };
 		20CB8E481AEBD1390007B738 /* RegexDrawView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexDrawView.m; sourceTree = "<group>"; };
 		20CB8E4C1AEBD5770007B738 /* Languages.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Languages.plist; sourceTree = "<group>"; };
+		20E8FE461AEDC0590020CC20 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F790108015F014D200C297D7 /* Regex Highlight View.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Regex Highlight View.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F790108415F014D200C297D7 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F790108615F014D200C297D7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -374,6 +374,7 @@
 				20CB8D861AEBCFC40007B738 /* ViewController.h */,
 				20CB8D871AEBCFC40007B738 /* ViewController.m */,
 				20CB8D961AEBD01C0007B738 /* RegexHighlightView */,
+				20E8FE461AEDC0590020CC20 /* Images.xcassets */,
 				F790108B15F014D200C297D7 /* Supporting Files */,
 			);
 			name = "Regex Highlight View Demo";
@@ -383,7 +384,6 @@
 		F790108B15F014D200C297D7 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				20CB8D921AEBCFED0007B738 /* Default-568h@2x.png */,
 				20CB8D941AEBCFF30007B738 /* Regex Highlight View-Info.plist */,
 				20CB8D891AEBCFE30007B738 /* InfoPlist.strings */,
 				20CB8D801AEBCFAF0007B738 /* main.m */,
@@ -503,7 +503,6 @@
 				20CB8E1F1AEBD01C0007B738 /* mysql.plist in Resources */,
 				20CB8E401AEBD01C0007B738 /* xml.plist in Resources */,
 				20CB8E331AEBD01C0007B738 /* shell.plist in Resources */,
-				20CB8D931AEBCFED0007B738 /* Default-568h@2x.png in Resources */,
 				20CB8DF21AEBD01C0007B738 /* ampl.plist in Resources */,
 				20CB8E2F1AEBD01C0007B738 /* rhtml.plist in Resources */,
 				20CB8E2B1AEBD01C0007B738 /* postscript.plist in Resources */,
@@ -527,6 +526,7 @@
 				20CB8DFB1AEBD01C0007B738 /* awk.plist in Resources */,
 				20CB8DF31AEBD01C0007B738 /* apache.plist in Resources */,
 				20CB8DF81AEBD01C0007B738 /* asp-vb.plist in Resources */,
+				20E8FE471AEDC0590020CC20 /* Images.xcassets in Resources */,
 				20CB8E061AEBD01C0007B738 /* eiffel.plist in Resources */,
 				20CB8E0A1AEBD01C0007B738 /* freefem.plist in Resources */,
 			);
@@ -636,6 +636,8 @@
 		F79010A215F014D300C297D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DEFINES_MODULE = NO;
@@ -650,6 +652,8 @@
 		F79010A315F014D300C297D7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DEFINES_MODULE = NO;
