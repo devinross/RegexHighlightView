@@ -10,10 +10,9 @@
 #import "RegexTextView.h"
 #import "RegexDrawView.h"
 #import "RegexConstants.h"
-
+#import "NSUserDefaults+UIColorSupport.h"
 
 @implementation RegexHighlightView
-
 
 - (instancetype) initWithFrame:(CGRect)frame{
     if(!(self=[super initWithFrame:frame])) return nil;
@@ -29,13 +28,12 @@
     rect.origin.x += 22;
     rect.size.width -= 22;
     
+
     self.textView = [[RegexTextView alloc] initWithFrame:rect];
     self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.textView.showsVerticalScrollIndicator = NO;
-    
     self.textView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     [self addSubview:self.textView];
-    
     
     self.drawView.highlightView = self;
     self.textView.drawView = self.drawView;
@@ -43,9 +41,8 @@
     
     self.clipsToBounds = YES;
     
-    self.backgroundColor = [UIColor redColor];
+    self.showLineNumbers = NO;
     
-    //self.highlightView.textColor = [UIColor colorWithWhite:0 alpha:0.3];
     
     return self;
 }
@@ -59,56 +56,51 @@
 }
 
 
-
-
-- (void) setLanguageFile:(NSString *)languageFile{
-    _languageFile = languageFile.copy;
-    
-    self.syntaxRegularExpressions = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:languageFile ofType:@"plist"]];
-    
-}
-
-- (void) setHighlightTheme:(RegexHighlightViewTheme)theme {
-    _highlightTheme = theme;
-
-    self.syntaxColors = [RegexHighlightView highlightTheme:theme];
-    self.backgroundColor = self.syntaxColors[kRegexHighlightViewTypeBackground];
-
-}
-- (void) setSyntaxColors:(NSDictionary*)newHighlightColor {
-    if(_syntaxColors!=newHighlightColor) {
-        _syntaxColors = newHighlightColor;
-        [self setNeedsLayout];
-        [self.drawView setNeedsDisplay];
-    }
-}
-- (void) setSyntaxRegularExpressions:(NSDictionary*)newHighlightDefinition {
-    if(_syntaxRegularExpressions!=newHighlightDefinition) {
-        _syntaxRegularExpressions = newHighlightDefinition;
-        [self setNeedsLayout];
-    }
-}
-
-
 + (NSArray*) languages{
     return [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Languages" ofType:@"plist"]];
 }
 
-
-
-
-static NSMutableDictionary* highlightThemes;
 #define RGBA(_RED,_GREEN,_BLUE,_ALPHA) [UIColor colorWithRed:_RED/255.0 green:_GREEN/255.0 blue:_BLUE/255.0 alpha:_ALPHA]
+
+#define DEFAULT_KEY(_STRING) [NSString stringWithFormat:@"regex-color-%@",_STRING]
+
 + (NSDictionary*) highlightTheme:(RegexHighlightViewTheme)theme {
-   
-    if(!highlightThemes)
-        highlightThemes = [NSMutableDictionary dictionary];
     
-    NSDictionary* themeColor = highlightThemes[@(theme)];
+    NSDictionary* themeColor;
     
-    if((themeColor=highlightThemes[@(theme)]))
-        return themeColor;
     
+    if(theme == kRegexHighlightViewThemeCustom){
+        
+        //default:
+        NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+        NSMutableDictionary *md = [NSMutableDictionary dictionary];
+        NSArray *keys = @[kRegexHighlightViewTypeText,
+                          kRegexHighlightViewTypeBackground,
+                          kRegexHighlightViewTypeComment,
+                          kRegexHighlightViewTypeDocumentationComment,
+                          kRegexHighlightViewTypeDocumentationCommentKeyword,
+                          kRegexHighlightViewTypeString,
+                          kRegexHighlightViewTypeCharacter,
+                          kRegexHighlightViewTypeNumber,
+                          kRegexHighlightViewTypeKeyword,
+                          kRegexHighlightViewTypePreprocessor,
+                          kRegexHighlightViewTypeURL,
+                          kRegexHighlightViewTypeAttribute,
+                          kRegexHighlightViewTypeProject, kRegexHighlightViewTypeOther ];
+        
+        for(NSString *key in keys){
+            UIColor *clr = [def colorForKey:DEFAULT_KEY(key)];
+            if(clr) md[key] = clr;
+        }
+        return md.copy;
+    }
+    
+    
+
+
+
+
     //If not define the theme and return it
     switch(theme) {
         case kRegexHighlightViewThemeBasic:
@@ -227,6 +219,7 @@ static NSMutableDictionary* highlightThemes;
                            kRegexHighlightViewTypeOther                          : RGBA(86, 86, 86, 1)};
             break;
         case kRegexHighlightViewThemeSunset:
+        default:
             themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
                            kRegexHighlightViewTypeBackground                     : RGBA(255, 252, 236, 1),
                            kRegexHighlightViewTypeComment                        : RGBA(208, 134, 59, 1),
@@ -242,49 +235,101 @@ static NSMutableDictionary* highlightThemes;
                            kRegexHighlightViewTypeProject                        : RGBA(196, 88, 31, 1),
                            kRegexHighlightViewTypeOther                          : RGBA(196, 88, 31, 1)};
             break;
-        case kRegexHighlightViewThemeCustom:
-            
-            break;
+
     }
-    if(themeColor) {
-        highlightThemes[@(theme)] = themeColor;
+
         return themeColor;
-    } else
-        return nil;
+}
+
+/*
+ //case kRegexHighlightViewThemeDefault:
+ //themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
+ //               kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
+ //               kRegexHighlightViewTypeComment                        : RGBA(0, 131, 39, 1),
+ //               kRegexHighlightViewTypeDocumentationComment           : RGBA(0, 131, 39, 1),
+ //               kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(0, 76, 29, 1),
+ //               kRegexHighlightViewTypeString                         : RGBA(211, 45, 38, 1),
+ //               kRegexHighlightViewTypeCharacter                      : RGBA(40, 52, 206, 1),
+ //               kRegexHighlightViewTypeNumber                         : RGBA(40, 52, 206, 1),
+ //               kRegexHighlightViewTypeKeyword                        : RGBA(188, 49, 156, 1),
+ //               kRegexHighlightViewTypePreprocessor                   : RGBA(120, 72, 48, 1),
+ //               kRegexHighlightViewTypeURL                            : RGBA(21, 67, 244, 1),
+ //               kRegexHighlightViewTypeAttribute                      : RGBA(150, 125, 65, 1),
+ //               kRegexHighlightViewTypeProject                        : RGBA(77, 129, 134, 1),
+ //               kRegexHighlightViewTypeOther                          : RGBA(113, 65, 163, 1)};
+ 
+ //case kRegexHighlightViewThemeBasic:
+ //themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0,   0,   0,   1),
+ //               kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
+ //               kRegexHighlightViewTypeComment                        : RGBA(0,   142, 43,  1),
+ //               kRegexHighlightViewTypeDocumentationComment           : RGBA(0,   142, 43,  1),
+ //               kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(0,   142, 43,  1),
+ //               kRegexHighlightViewTypeString                         : RGBA(181, 37,  34,  1),
+ //               kRegexHighlightViewTypeCharacter                      : RGBA(0,   0,   0,   1),
+ //               kRegexHighlightViewTypeNumber                         : RGBA(0,   0,   0,   1),
+ //               kRegexHighlightViewTypeKeyword                        : RGBA(6,   63,  244, 1),
+ //               kRegexHighlightViewTypePreprocessor                   : RGBA(6,   63,  244, 1),
+ //               kRegexHighlightViewTypeURL                            : RGBA(6,   63,  244, 1),
+ //               kRegexHighlightViewTypeAttribute                      : RGBA(0,   0,   0,   1),
+ //               kRegexHighlightViewTypeProject                        : RGBA(49,  149, 172, 1),
+ //               kRegexHighlightViewTypeOther                          : RGBA(49,  149, 172, 1)};
+ 
+ */
+
+#pragma mark Properties
+- (void) setLanguageFile:(NSString *)languageFile{
+    _languageFile = languageFile.copy;
+    self.syntaxRegularExpressions = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:languageFile ofType:@"plist"]];
+}
+- (void) setHighlightTheme:(RegexHighlightViewTheme)theme {
+    _highlightTheme = theme;
+    self.syntaxColors = [RegexHighlightView highlightTheme:theme];
+}
+- (void) setSyntaxColors:(NSDictionary*)newHighlightColor {
+    if(_syntaxColors!=newHighlightColor) {
+        _syntaxColors = newHighlightColor;
+        self.backgroundColor = self.syntaxColors[kRegexHighlightViewTypeBackground];
+        [self setNeedsLayout];
+        [self.drawView setNeedsDisplay];
+    }
+}
+- (void) setSyntaxRegularExpressions:(NSDictionary*)newHighlightDefinition {
+    if(_syntaxRegularExpressions!=newHighlightDefinition) {
+        _syntaxRegularExpressions = newHighlightDefinition;
+        [self setNeedsLayout];
+    }
+}
+
+- (void) setShowLineNumbers:(BOOL)showLineNumbers{
+    _showLineNumbers = showLineNumbers;
+    
+    CGRect rect = self.bounds;
+    if(showLineNumbers){
+        
+        rect.origin.y += 7;
+        rect.size.height -= 6;
+        rect.origin.x += 22;
+        rect.size.width -= 22;
+        
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone || UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+            rect.origin.x += 4;
+            rect.size.width -= 8;
+        }
+        
+    }else{
+        
+        rect.origin.y += 7;
+        rect.size.height -= 6;
+        rect.origin.x += 6;
+        rect.size.width -= 6;
+
+    }
+    self.textView.frame = rect;
+    [self setNeedsLayout];
+    [self.drawView setNeedsDisplay];
 }
 
 
-//case kRegexHighlightViewThemeDefault:
-//themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
-//               kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
-//               kRegexHighlightViewTypeComment                        : RGBA(0, 131, 39, 1),
-//               kRegexHighlightViewTypeDocumentationComment           : RGBA(0, 131, 39, 1),
-//               kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(0, 76, 29, 1),
-//               kRegexHighlightViewTypeString                         : RGBA(211, 45, 38, 1),
-//               kRegexHighlightViewTypeCharacter                      : RGBA(40, 52, 206, 1),
-//               kRegexHighlightViewTypeNumber                         : RGBA(40, 52, 206, 1),
-//               kRegexHighlightViewTypeKeyword                        : RGBA(188, 49, 156, 1),
-//               kRegexHighlightViewTypePreprocessor                   : RGBA(120, 72, 48, 1),
-//               kRegexHighlightViewTypeURL                            : RGBA(21, 67, 244, 1),
-//               kRegexHighlightViewTypeAttribute                      : RGBA(150, 125, 65, 1),
-//               kRegexHighlightViewTypeProject                        : RGBA(77, 129, 134, 1),
-//               kRegexHighlightViewTypeOther                          : RGBA(113, 65, 163, 1)};
-
-//case kRegexHighlightViewThemeBasic:
-//themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0,   0,   0,   1),
-//               kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
-//               kRegexHighlightViewTypeComment                        : RGBA(0,   142, 43,  1),
-//               kRegexHighlightViewTypeDocumentationComment           : RGBA(0,   142, 43,  1),
-//               kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(0,   142, 43,  1),
-//               kRegexHighlightViewTypeString                         : RGBA(181, 37,  34,  1),
-//               kRegexHighlightViewTypeCharacter                      : RGBA(0,   0,   0,   1),
-//               kRegexHighlightViewTypeNumber                         : RGBA(0,   0,   0,   1),
-//               kRegexHighlightViewTypeKeyword                        : RGBA(6,   63,  244, 1),
-//               kRegexHighlightViewTypePreprocessor                   : RGBA(6,   63,  244, 1),
-//               kRegexHighlightViewTypeURL                            : RGBA(6,   63,  244, 1),
-//               kRegexHighlightViewTypeAttribute                      : RGBA(0,   0,   0,   1),
-//               kRegexHighlightViewTypeProject                        : RGBA(49,  149, 172, 1),
-//               kRegexHighlightViewTypeOther                          : RGBA(49,  149, 172, 1)};
 
 @end
 

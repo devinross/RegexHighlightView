@@ -49,8 +49,7 @@
 //}
 - (instancetype) initWithFrame:(CGRect)frame{
     if(!(self=[super initWithFrame:frame])) return nil;
-    self.textColor = [UIColor colorWithWhite:0.5 alpha:0.1];
-    //self.textColor = [UIColor redColor];
+    self.textColor = [UIColor colorWithWhite:0.5 alpha:0.4];
     self.delegate = self;
     self.backgroundColor = [UIColor clearColor];
     return self;

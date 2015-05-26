@@ -23,6 +23,7 @@
 - (void) drawRect:(CGRect)rect {
     [super drawRect:rect];
     
+    BOOL showLineNumbers = self.highlightView.showLineNumbers;
     
     RegexTextView *txtView = self.highlightView.textView;
     NSString *str = txtView.text;
@@ -33,8 +34,6 @@
     NSDictionary* attributes;
     CTParagraphStyleRef style;
 
-    
-    
     //Prepare View for drawing
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetTextMatrix(context,CGAffineTransformIdentity);
@@ -43,7 +42,18 @@
     
     CGSize size = self.frame.size;
     UIColor *textColor = self.highlightView.syntaxColors[kRegexHighlightViewTypeText];
-    CGFloat minimumLineHeight = [str sizeWithFont:txtView.font].height - 1,  maximumLineHeight = minimumLineHeight;
+    
+    
+    CGFloat minimumLineHeight = [str sizeWithFont:txtView.font].height - 1;;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone || UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+        minimumLineHeight = [str sizeWithFont:txtView.font].height - 0.7;
+        
+    }else{
+        minimumLineHeight = [str sizeWithFont:txtView.font].height - 1;
+
+    }
+    CGFloat maximumLineHeight = minimumLineHeight;
+    
     CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)txtView.font.fontName, txtView.font.pointSize,NULL);
     CTLineBreakMode lineBreakMode = kCTLineBreakByWordWrapping;
     
@@ -58,68 +68,91 @@
                    (NSString*)kCTParagraphStyleAttributeName      : (__bridge id)style};
     
     
-    
-    
     CGMutablePathRef path = CGPathCreateMutable();
-    CGFloat minX = -8, minY = - 9;
-    minX = 30;
+    CGFloat minX = showLineNumbers ? 30 : 12;
+    CGFloat minY = - 9;
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone || UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+    
+        minX = showLineNumbers ? (27+4) : 11;
 
-    CGFloat width = size.width - minX - MARGIN, height = self.bounds.size.height;
+    } else {
+        minX = showLineNumbers ? 30 : 12;
+    }
+    
+    
+    
+    CGFloat margin = 8;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone || UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        margin = showLineNumbers ? 8 : 2;
+    } else {
+        margin = 8;
+    }
+
+    CGFloat width = size.width - minX - margin, height = self.bounds.size.height;
+    
+    NSLog(@"%f %f %f",minX,margin,width);
+
     CGPathAddRect(path,NULL,CGRectMake(minX,minY,width,height));
     
     NSAttributedString *atr = [[NSAttributedString alloc] initWithString:str attributes:attributes];
     CFAttributedStringRef attributedString = (__bridge CFAttributedStringRef)[txtView highlightText:atr];
     
     CTFramesetterRef framesetter;
-    CTFrameRef frame, textFrame;
+    CTFrameRef frame;
 
     framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);
-    textFrame = frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0,CFAttributedStringGetLength(attributedString)),path,NULL);
+    frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0,CFAttributedStringGetLength(attributedString)),path,NULL);
     CTFrameDraw(frame,context);
     
-    
     CGFloat frameHeight = [RegexDrawView measureFrame:frame].height;
-    
-    
     NSInteger num = (frameHeight)/minimumLineHeight;
-    
     if([str hasSuffix:@"\n"]){
         frameHeight += minimumLineHeight;
         num ++;
     }
     
+    
+    if(self.highlightView.showLineNumbers){
+        
+        minY = self.bounds.size.height - frameHeight - 9;
+        CGRect rr = CGRectMake(0,minY,24,frameHeight);
+        CGMutablePathRef path2 = CGPathCreateMutable();
+        CGPathAddRect(path2,NULL,rr);
+        
+        CTTextAlignment alignment = kCTRightTextAlignment;
+        CTParagraphStyleSetting alignmentSetting;
+        alignmentSetting.spec = kCTParagraphStyleSpecifierAlignment;
+        alignmentSetting.valueSize = sizeof(CTTextAlignment);
+        alignmentSetting.value = &alignment;
+        
+        style = CTParagraphStyleCreate((CTParagraphStyleSetting[4]){
+            {   kCTParagraphStyleSpecifierMinimumLineHeight,sizeof(minimumLineHeight),&minimumLineHeight},
+            {   kCTParagraphStyleSpecifierMaximumLineHeight,sizeof(maximumLineHeight),&maximumLineHeight},
+            {   kCTParagraphStyleSpecifierLineBreakMode,sizeof(CTLineBreakMode),&lineBreakMode},
+        alignmentSetting},4);
+        
+        
+        attributes = @{(NSString*)kCTFontAttributeName               : (__bridge id)font,
+                       (NSString*)kCTForegroundColorAttributeName     : (__bridge id)[UIColor colorWithWhite:125/255.0f alpha:1].CGColor,
+                       (NSString*)kCTParagraphStyleAttributeName      : (__bridge id)style };
+        
+        atr = [[NSMutableAttributedString alloc] initWithString:[self numberStringWithText:str count:num frame:frame] attributes:attributes];
+        attributedString = (__bridge CFAttributedStringRef)atr;
+        
+        
+        
+        CTFramesetterRef framesetter2 = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);
+        frame = CTFramesetterCreateFrame(framesetter2, CFRangeMake(0,CFAttributedStringGetLength(attributedString)),path2,NULL);
+        CTFrameDraw(frame,context);
+        
+        CFRelease(framesetter2);
+        CGPathRelease(path2);
 
-    minY = self.bounds.size.height - frameHeight - 9;
-    CGRect rr = CGRectMake(0,minY,24,frameHeight);
-    path = CGPathCreateMutable();
-    CGPathAddRect(path,NULL,rr);
-    
-    
 
-    
-    CTTextAlignment alignment = kCTRightTextAlignment;
-    CTParagraphStyleSetting alignmentSetting;
-    alignmentSetting.spec = kCTParagraphStyleSpecifierAlignment;
-    alignmentSetting.valueSize = sizeof(CTTextAlignment);
-    alignmentSetting.value = &alignment;
-    CTParagraphStyleSetting settings[1] = {alignmentSetting};
-    size_t settingsCount = 1;
-    CTParagraphStyleRef paragraphRef = CTParagraphStyleCreate(settings, settingsCount);
-    
+    }
 
-    attributes = @{(NSString*)kCTFontAttributeName                : (__bridge id)font,
-                  (NSString*)kCTForegroundColorAttributeName     : (__bridge id)[UIColor colorWithWhite:125/255.0f alpha:1].CGColor,
-                  (NSString*)kCTParagraphStyleAttributeName      : (__bridge id)paragraphRef };
-    
-    atr = [[NSMutableAttributedString alloc] initWithString:[self numberStringWithText:str count:num frame:textFrame] attributes:attributes];
-    attributedString = (__bridge CFAttributedStringRef)atr;
 
-    
-    
-    framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedString);
-    frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0,CFAttributedStringGetLength(attributedString)),path,NULL);
-    CTFrameDraw(frame,context);
-    
 }
 
 + (CGSize) measureFrame:(CTFrameRef)frame{

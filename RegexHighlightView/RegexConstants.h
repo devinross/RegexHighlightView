@@ -32,9 +32,8 @@ typedef NS_ENUM(unsigned int, RegexHighlightViewTheme) {
     kRegexHighlightViewThemePresentation = 5,
     kRegexHighlightViewThemePrinting = 6,
     kRegexHighlightViewThemeSunset = 7,
-    kRegexHighlightViewThemeCustom
+    kRegexHighlightViewThemeCustom = 8
 
 };
 
 #define EMPTY @" "
-static CGFloat MARGIN = 8;
