@@ -103,22 +103,7 @@
 
     //If not define the theme and return it
     switch(theme) {
-        case kRegexHighlightViewThemeBasic:
-            themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0,   0,   0,   1),
-                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
-                           kRegexHighlightViewTypeComment                        : RGBA(0,   142, 43,  1),
-                           kRegexHighlightViewTypeDocumentationComment           : RGBA(0,   142, 43,  1),
-                           kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(0,   142, 43,  1),
-                           kRegexHighlightViewTypeString                         : RGBA(181, 37,  34,  1),
-                           kRegexHighlightViewTypeCharacter                      : RGBA(0,   0,   0,   1),
-                           kRegexHighlightViewTypeNumber                         : RGBA(0,   0,   0,   1),
-                           kRegexHighlightViewTypeKeyword                        : RGBA(6,   63,  244, 1),
-                           kRegexHighlightViewTypePreprocessor                   : RGBA(6,   63,  244, 1),
-                           kRegexHighlightViewTypeURL                            : RGBA(6,   63,  244, 1),
-                           kRegexHighlightViewTypeAttribute                      : RGBA(0,   0,   0,   1),
-                           kRegexHighlightViewTypeProject                        : RGBA(49,  149, 172, 1),
-                           kRegexHighlightViewTypeOther                          : RGBA(49,  149, 172, 1)};
-            break;
+
         case kRegexHighlightViewThemeDefault:
             themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
                            kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
@@ -219,7 +204,6 @@
                            kRegexHighlightViewTypeOther                          : RGBA(86, 86, 86, 1)};
             break;
         case kRegexHighlightViewThemeSunset:
-        default:
             themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0, 0, 0, 1),
                            kRegexHighlightViewTypeBackground                     : RGBA(255, 252, 236, 1),
                            kRegexHighlightViewTypeComment                        : RGBA(208, 134, 59, 1),
@@ -234,6 +218,59 @@
                            kRegexHighlightViewTypeAttribute                      : RGBA(58, 76, 166, 1),
                            kRegexHighlightViewTypeProject                        : RGBA(196, 88, 31, 1),
                            kRegexHighlightViewTypeOther                          : RGBA(196, 88, 31, 1)};
+            break;
+            
+            
+        case kRegexHighlightViewThemeSpaceGray:
+            themeColor = @{kRegexHighlightViewTypeText                           : [UIColor colorWithRed:0.70156 green:0.723031 blue:0.767213 alpha:1],
+                           kRegexHighlightViewTypeBackground                     : [UIColor colorWithRed:0.126146 green:0.139869 blue:0.174509 alpha:1],
+                           kRegexHighlightViewTypeComment                        : [UIColor colorWithRed:0.242153 green:0.283381 blue:0.325653 alpha:1],
+                           kRegexHighlightViewTypeDocumentationComment           : [UIColor colorWithRed:0.319563 green:0.371489 blue:0.414287 alpha:1],
+                           kRegexHighlightViewTypeDocumentationCommentKeyword    : [UIColor colorWithRed:0.319563 green:0.371489 blue:0.414287 alpha:1],
+                           kRegexHighlightViewTypeString                         : [UIColor colorWithRed:0.583466 green:0.705829 blue:0.482261 alpha:1],
+                           kRegexHighlightViewTypeCharacter                      : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeNumber                         : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeKeyword                        : [UIColor colorWithRed:0.647495 green:0.479109 blue:0.620455 alpha:1],
+                           kRegexHighlightViewTypePreprocessor                   : [UIColor colorWithRed:0.521837 green:0.654028 blue:0.646684 alpha:1],
+                           kRegexHighlightViewTypeURL                            : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeAttribute                      : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeProject                        : [UIColor colorWithRed:0.897085 green:0.753645 blue:0.470402 alpha:1],
+                           kRegexHighlightViewTypeOther                          : [UIColor colorWithRed:0.689693 green:0.296345 blue:0.345124 alpha:1]};
+            break;
+            
+        case kRegexHighlightViewThemeSilver:
+            themeColor = @{kRegexHighlightViewTypeText                           : [UIColor colorWithRed:0.242153 green:0.283381 blue:0.325653 alpha:1],
+                           kRegexHighlightViewTypeBackground                     : [UIColor colorWithRed:0.92606 green:0.933418 blue:0.949697 alpha:1],
+                           kRegexHighlightViewTypeComment                        : [UIColor colorWithRed:0.319563 green:0.371489 blue:0.414287 alpha:1],
+                           kRegexHighlightViewTypeDocumentationComment           : [UIColor colorWithRed:0.319563 green:0.371489 blue:0.414287 alpha:1],
+                           kRegexHighlightViewTypeDocumentationCommentKeyword    : [UIColor colorWithRed:0.319563 green:0.371489 blue:0.414287 alpha:1],
+                           kRegexHighlightViewTypeString                         : [UIColor colorWithRed:0.583466 green:0.705829 blue:0.482261 alpha:1],
+                           kRegexHighlightViewTypeCharacter                      : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeNumber                         : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeKeyword                        : [UIColor colorWithRed:0.647495 green:0.479109 blue:0.620455 alpha:1],
+                           kRegexHighlightViewTypePreprocessor                   : [UIColor colorWithRed:0.521837 green:0.654028 blue:0.646684 alpha:1],
+                           kRegexHighlightViewTypeURL                            : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeAttribute                      : [UIColor colorWithRed:0.772607 green:0.450947 blue:0.368476 alpha:1],
+                           kRegexHighlightViewTypeProject                        : [UIColor colorWithRed:0.689693 green:0.296345 blue:0.345124 alpha:1],
+                           kRegexHighlightViewTypeOther                          : [UIColor colorWithRed:0.521837 green:0.654028 blue:0.646684 alpha:1]};
+            break;
+            
+        case kRegexHighlightViewThemeBasic:
+        default:
+            themeColor = @{kRegexHighlightViewTypeText                           : RGBA(0,   0,   0,   1),
+                           kRegexHighlightViewTypeBackground                     : RGBA(255, 255, 255, 0),
+                           kRegexHighlightViewTypeComment                        : RGBA(0,   142, 43,  1),
+                           kRegexHighlightViewTypeDocumentationComment           : RGBA(0,   142, 43,  1),
+                           kRegexHighlightViewTypeDocumentationCommentKeyword    : RGBA(0,   142, 43,  1),
+                           kRegexHighlightViewTypeString                         : RGBA(181, 37,  34,  1),
+                           kRegexHighlightViewTypeCharacter                      : RGBA(0,   0,   0,   1),
+                           kRegexHighlightViewTypeNumber                         : RGBA(0,   0,   0,   1),
+                           kRegexHighlightViewTypeKeyword                        : RGBA(6,   63,  244, 1),
+                           kRegexHighlightViewTypePreprocessor                   : RGBA(6,   63,  244, 1),
+                           kRegexHighlightViewTypeURL                            : RGBA(6,   63,  244, 1),
+                           kRegexHighlightViewTypeAttribute                      : RGBA(0,   0,   0,   1),
+                           kRegexHighlightViewTypeProject                        : RGBA(49,  149, 172, 1),
+                           kRegexHighlightViewTypeOther                          : RGBA(49,  149, 172, 1)};
             break;
 
     }
