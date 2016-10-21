@@ -6,7 +6,7 @@
 //
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 #import "RegexConstants.h"
 #import "RegexTextView.h"
 #import "RegexDrawView.h"
@@ -26,8 +26,7 @@
 
 - (void) resize;
 
-+ (NSArray*) languages;
-+ (NSDictionary*) highlightTheme:(RegexHighlightViewTheme)theme;
+
 
 
 @end

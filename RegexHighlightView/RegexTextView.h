@@ -27,9 +27,8 @@
 //  OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-#import <UIKit/UIKit.h>
-#import <CoreText/CoreText.h>
+@import UIKit;
+@import CoreText;
 #import "RegexConstants.h"
 
 
@@ -39,8 +38,6 @@
 
 @property (nonatomic,weak) RegexDrawView *drawView;
 @property (nonatomic,weak) RegexHighlightView *containerView;
-
-
 
 - (NSRange) visibleRangeOfTextView:(UITextView *)textView ;
 - (NSAttributedString*) highlightText:(NSAttributedString*)attributedString;

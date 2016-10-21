@@ -6,11 +6,11 @@
 //  Copyright (c) 2015 Devin Ross. All rights reserved.
 //
 
-#import "NSUserDefaults+UIColorSupport.h"
+#import "NSUserDefaults+NSColorSupport.h"
 
-@implementation NSUserDefaults (ColorSupport)
+@implementation NSUserDefaults (NSColorSupport)
 
-- (void) setColor:(UIColor *)aColor forKey:(NSString *)aKey{
+- (void) setColor:(NSColor *)aColor forKey:(NSString *)aKey{
     if(!aColor){
         [self removeObjectForKey:aKey];
     }else{
@@ -19,12 +19,12 @@
     }
 }
 
-- (UIColor *) colorForKey:(NSString *)aKey{
-    UIColor *theColor = nil;
+- (NSColor *) colorForKey:(NSString *)aKey{
+    NSColor *theColor = nil;
     NSString *theData = [self objectForKey:aKey];
     if (theData != nil){
         NSArray *array = [theData componentsSeparatedByString:@"|"];
-        theColor = [UIColor colorWithRed:[array[0] floatValue] green:[array[1] floatValue] blue:[array[2] floatValue] alpha:[array[3] floatValue]];
+        theColor = [NSColor colorWithRed:[array[0] floatValue] green:[array[1] floatValue] blue:[array[2] floatValue] alpha:[array[3] floatValue]];
     }
     return theColor;
 }

@@ -31,7 +31,7 @@
 #import "RegexConstants.h"
 #import "RegexDrawView.h"
 #import "RegexHighlightView.h"
-
+#import "Regex.h"
 
 @implementation RegexTextView
 
@@ -40,13 +40,7 @@
     if(!(self=[super init])) return nil;
     return self;
 }
-//- (instancetype) initWithCoder:(NSCoder*)decoder{
-//    if(!(self=[super initWithCoder:decoder])) return nil;
-//    self.textColor = [UIColor clearColor];
-//    self.internalDelegate = [[RegexHighlightViewDelegate alloc] init];
-//    self.delegate = self.internalDelegate;
-//    return self;
-//}
+
 - (instancetype) initWithFrame:(CGRect)frame{
     if(!(self=[super initWithFrame:frame])) return nil;
     self.textColor = [UIColor colorWithWhite:0.5 alpha:0.4];
@@ -104,7 +98,7 @@
             UIColor* textColor = nil;
             //Get the text color, if it is a custom key and no color was defined, choose black
             if(!self.containerView.syntaxColors || !(textColor=((self.containerView.syntaxColors)[key])))
-                if(!(textColor=[RegexHighlightView highlightTheme:kRegexHighlightViewThemeDefault][key]))
+                if(!(textColor=[Regex highlightTheme:kRegexHighlightViewThemeDefault][key]))
                     textColor = [UIColor blackColor];
             
             
